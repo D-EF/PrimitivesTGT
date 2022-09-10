@@ -2,7 +2,7 @@
  * @Author: Darth_Eternalfaith darth_ef@hotmail.com
  * @Date: 2022-09-10 20:58:17
  * @LastEditors: Darth_Eternalfaith darth_ef@hotmail.com
- * @LastEditTime: 2022-09-11 00:07:20
+ * @LastEditTime: 2022-09-11 00:08:36
  * @FilePath: \PrimitivesTGT-2D_Editor\js\import\PrimitivesTGT\readme.md
  * @Description: 
  * 
@@ -25,8 +25,10 @@
 ## 所有暴露可用的类、函数 ↓↓↓
 ###  一点点数学 Nittle Math Library: <a href="./NML.js.md"> NML.js </a>
 
-
-正则表达式查找替换: 
+---
+---
+---
+# 正则表达式查找替换: 
 * 静态成员函数的函数注释 --> md文档
     *  ` */\*\*(.*)([\s\S\n]*?)\*\/[\s\S\n]*?(\w.*)\{[\s\S\n]*?\/\*`
     *  `\n### $3  $1$2---\n/*`
