@@ -2,7 +2,7 @@
  * @Author: Darth_Eternalfaith darth_ef@hotmail.com
  * @Date: 2022-09-10 21:02:08
  * @LastEditors: Darth_Eternalfaith darth_ef@hotmail.com
- * @LastEditTime: 2022-09-11 00:05:56
+ * @LastEditTime: 2022-09-11 22:26:56
  * @FilePath: \PrimitivesTGT-2D_Editor\js\import\PrimitivesTGT\NML.js.md
  * @Description: 
  * 
@@ -27,10 +27,10 @@ const CONGFIG={
 
 # 类
 NML.js 中使用的数据结构大部分为线性结构, 并使用静态函数进行操作。
-* [向量 Vector](#Vector)
-* [矩阵 Matrix](#Matrix)
-* [2d矩阵 Matrix_2](#Matrix_2)
-* [3d矩阵 Matrix_3](#Matrix_3)
+* [向量 Vector](#vector)
+* [矩阵 Matrix](#matrix)
+* [2d矩阵 Matrix_2](#matrix_2)
+* [3d矩阵 Matrix_3](#matrix_3)
 
 ---
 ## Vector
