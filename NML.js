@@ -2,18 +2,15 @@
  * @Author: Darth_Eternalfaith darth_ef@hotmail.com
  * @Date: 2022-08-26 01:29:45
  * @LastEditors: Darth_Eternalfaith darth_ef@hotmail.com
- * @LastEditTime: 2022-09-10 23:43:43
+ * @LastEditTime: 2022-09-13 23:19:41
  * @FilePath: \PrimitivesTGT-2D_Editor\js\import\PrimitivesTGT\NML.js
  * @Description: Nittle Math Library
  * 
  * Copyright (c) 2022 by Darth_Eternalfaith darth_ef@hotmail.com, All Rights Reserved. 
  */
 
-import { deg } from "../basics/math_ex.js";
+import { approximately, deg } from "../basics/math_ex.js";
 
-/** @typedef {Number} int      整形数字 */
-/** @typedef {Number} double   双浮点数字 */
-/** @typedef {Number} float    单浮点数字 */
 
 /** 配置  */
 const CONGFIG={
@@ -27,9 +24,13 @@ const {sin,cos,asin,acos}=Math;
 
 // 类型注释 open
     /** @typedef {Float32Array} CONGFIG.VALUE_TYPE 矩阵计算时缓存下标的类型; 决定了计算时矩阵的n的大小 可选值为 Uint_N_Array, Int_N_Array */
+    /** @typedef {Number} int      整形数字 */
+    /** @typedef {Number} double   双浮点数字 */
+    /** @typedef {Number} float    单浮点数字 */
+    /** @typedef {Number[]|Float32Array|Float64Array|Vector} Vec 2D向量的各种存储形式 */
+    /** @typedef {Number[]|Float32Array|Float64Array|Matrix} Mat 矩阵的各种存储形式 */
 // 类型注释 end
 
-/** @typedef {Number[]|Float32Array|Float64Array|Vector} Vec 2D向量的各种存储形式 */
 
 /** 向量 */
 class Vector extends CONGFIG.VALUE_TYPE{
@@ -228,8 +229,6 @@ class Vector extends CONGFIG.VALUE_TYPE{
         return Vector.dot(v1,v2)/(Vector.mag(v1)*Vector.mag(v2));
     }
 }
-Vector.ZERO_POINT=new Vector(0,0);
-// Vector.INFINITY=new Vector(Infinity,Infinity);
 
 
 /* ! 变换矩阵    ----------------------------------------------------------------------------------------------------------------------------------------------------------    变换矩阵 */
@@ -241,8 +240,6 @@ Vector.ZERO_POINT=new Vector(0,0);
  * [4, 5, 6]  >>  [1,2,3,4,5,6,7,8,9]
  * [7, 8, 9]
  */
-
-/** @typedef {Number[]|Float32Array|Float64Array|Matrix} Mat 矩阵的各种存储形式 */
 
 /** 矩阵  */
 class Matrix extends CONGFIG.VALUE_TYPE{
@@ -607,6 +604,7 @@ class Matrix extends CONGFIG.VALUE_TYPE{
     }
 }
 
+/** 用于创建2d变换矩阵的静态类 */
 class Matrix_2 extends Matrix{
     /** 创建旋转矩阵
      * @param {Number} theta 顺时针 旋转角弧度
@@ -672,7 +670,7 @@ class Matrix_2 extends Matrix{
     }
 
     /** 创建等比缩放&旋转矩阵 根据向量生成矩阵
-     * @param {Vector} v2 2d向量
+     * @param {Vec} v2 2d向量
      * @return {Matrix_2} 返回一个矩阵
      */
     static create_ByVector(v2){
@@ -680,6 +678,21 @@ class Matrix_2 extends Matrix{
     }
 }
 
+Matrix_2.ROTATE_90=new Matrix_2([0,1,-1,0]);
+Matrix_2.ROTATE_90_I=new Matrix_2([0,-1,1,0]);
+Matrix_2.FLIP_HORIZONTAL=new Matrix_2([-1,0,0,1]);
+
+
+/** 用于创建3D变换矩阵的静态类
+ *  规定统一使用左手坐标系
+ *            ^  +y
+ *            |     7 +z
+ *            |  /  
+ * -----------+-----------> +x
+ *         /  |   
+ *      /     |   
+ *            |   
+ */
 class Matrix_3 extends Matrix{
     /** 创建缩放矩阵
      * @param {flot} x x坐标中的缩放系数
@@ -695,29 +708,30 @@ class Matrix_3 extends Matrix{
         ]);
     }
     /** 创建旋转矩阵
-     * @param {int} axis 旋转中心轴  { 1:x, 2:y, 3:z }
      * @param {Number} theta 旋转弧度
+     * @param {int} axis 旋转中心轴  [z,y,x] 默认为 0
      * @return {Matrix_3} 返回一个矩阵
      */
-    static create_Rotate(axis,theta){
+    static create_Rotate(theta,axis){
         var s=sin(theta),
             c=cos(theta);
         switch(axis){
-            case 1:
+            case 2:
                 // 绕x轴旋转
                 return new Matrix_3(
                     [1, 0, 0,
                      0, c, s,
                      0,-s, c]);
             break;
-            case 2:
+            case 1:
                 // 绕y轴旋转
                 return new Matrix_3(
                     [c, 0,-s,
                      0, 1, 0,
                      s, 0, c]);
             break;
-            case 3:
+            case 0:
+            default:
                 // 绕z轴旋转
                 return new Matrix_3(
                     [ c, s, 0,
@@ -727,22 +741,17 @@ class Matrix_3 extends Matrix{
         }
     }
 
-    /** 创建等比缩放&旋转矩阵 根据向量生成矩阵
-     * @param {Vector} v2 2d向量
-     * @return {Matrix_2} 返回一个矩阵
-     */
-    create_ByVector3(v3){
-        // todo
-        
-    }
-
-    /** 使用原2d矩阵创建3d矩阵
-     * @param {Matrix_2}  m2    原矩阵(2d)
-     * @param {Vector}    v     映射的法向
+    /** 创建旋转矩阵, 使用旋转向量
+     * @param {Vec} _v  3d向量
      * @return {Matrix_3} 返回一个矩阵
      */
-    static create_ByM2(m2,v){
-
+    static create_Rotate__v(_v){
+        var v=Vector.create_Normalization(_v);
+        return new Matrix_3([
+            0   ,   -v.z,   +v.y,
+            +v.z,   0   ,   -v.x,
+            -v.y,   +v.x,   0 
+        ]);
     }
 }
 
@@ -755,16 +764,6 @@ Matrix_3.ROTATE_Y_180DEG    = new Matrix_3([-1, 0, -0, 0, 1, 0, 0, 0, -1 ]);
 Matrix_3.ROTATE_Z_CCW_90DEG = new Matrix_3([0, 1, 0, -1, 0, 0, 0, 0, 1 ]);
 Matrix_3.ROTATE_Z_CW_90DEG  = new Matrix_3([0, 1, 0, -1, 0, 0, 0, 0, 1 ]);
 Matrix_3.ROTATE_Z_180DEG    = new Matrix_3([-1, 0, 0, -0, -1, 0, 0, 0, 1 ]);
-
-/**
- * 近似相等, 用于浮点误差计算后判断结果是否相近; 
- * @param {Number} num1 数字1
- * @param {Number} num2 数字2
- * @param {Number} tolerance 容差， 默认为 1e-12
- */
-function approximately(num1,num2,tolerance){
-    return Math.abs(num1-num2)<(tolerance||1e-12);
-}
 
 export{
     Vector,

@@ -2,7 +2,7 @@
  * @Author: Darth_Eternalfaith darth_ef@hotmail.com
  * @Date: 2022-09-10 21:02:08
  * @LastEditors: Darth_Eternalfaith darth_ef@hotmail.com
- * @LastEditTime: 2022-09-11 22:26:56
+ * @LastEditTime: 2022-09-13 23:20:55
  * @FilePath: \PrimitivesTGT-2D_Editor\js\import\PrimitivesTGT\NML.js.md
  * @Description: 
  * 
@@ -23,6 +23,18 @@ const CONGFIG={
     /** @type {float} 计算容差 */
     APPROXIMATELY_TOLERANCE:1e-6
 };
+```
+
+# 文件中定义的类型注释
+```javascript
+// 类型注释 open
+    /** @typedef {Float32Array} CONGFIG.VALUE_TYPE 矩阵计算时缓存下标的类型; 决定了计算时矩阵的n的大小 可选值为 Uint_N_Array, Int_N_Array */
+    /** @typedef {Number} int      整形数字 */
+    /** @typedef {Number} double   双浮点数字 */
+    /** @typedef {Number} float    单浮点数字 */
+    /** @typedef {Number[]|Float32Array|Float64Array|Vector} Vec 2D向量的各种存储形式 */
+    /** @typedef {Number[]|Float32Array|Float64Array|Matrix} Mat 矩阵的各种存储形式 */
+// 类型注释 end
 ```
 
 # 类
@@ -128,6 +140,8 @@ NML.js 中使用的数据结构大部分为线性结构, 并使用静态函数�
 * @return {Number} 返回夹角的cos值
 ---
 
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - Matrix 矩阵 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+
 ---
 ## Matrix
 ```javascript
@@ -139,8 +153,6 @@ NML.js 中使用的数据结构大部分为线性结构, 并使用静态函数�
  */
  class Matrix extends CONGFIG.VALUE_TYPE 
 ```
-
-
 
 ### static create_Print(m,w)   创建打印用的二维数组
 * @param {Mat} m 矩阵
@@ -244,6 +256,9 @@ NML.js 中使用的数据结构大部分为线性结构, 并使用静态函数�
 * @param {int} [_n]    矩阵为n阶矩阵
 * @return {Matrix}     返回一个新的矩阵
 ---
+
+<!--  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 分割线 Matrix_2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+
 ---
 ## Matrix_2
 创建变换用的2d矩阵的静态类 继承于 Matrix
@@ -282,14 +297,27 @@ NML.js 中使用的数据结构大部分为线性结构, 并使用静态函数�
 ---
 
 ### static create_ByVector(v2)   创建等比缩放&旋转矩阵 根据向量生成矩阵
-* @param {Vector} v2 2d向量
+* @param {Vec} v2 2d向量
 * @return {Matrix_2} 返回一个矩阵
 ---
+
+<!--  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 分割线 Matrix_3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
 
 ---
 ## Matrix_3
 创建变换用的3d矩阵的静态类 继承于 Matrix
-
+如无另外说明，本库中所有涉及3d的均为左手坐标系
+``` javascript
+/** 
+ *            ^  +y
+ *            |     7 +z
+ *            |  /  
+ * -----------+-----------> +x
+ *         /  |   
+ *      /     |   
+ *            |   
+ */
+```
 
 ### static create_Scale(x,y,z)   创建缩放矩阵
 * @param {flot} x x坐标中的缩放系数
@@ -299,18 +327,12 @@ NML.js 中使用的数据结构大部分为线性结构, 并使用静态函数�
 ---
 
 ### static create_Rotate(axis,theta)   创建旋转矩阵
-* @param {int} axis 旋转中心轴  { 1:x, 2:y, 3:z }
+* @param {int} axis 旋转中心轴  \[z,y,x\] 默认为 0(z)
 * @param {Number} theta 旋转弧度
 * @return {Matrix_3} 返回一个矩阵
 ---
 
-### create_ByVector3(v3)   创建等比缩放&旋转矩阵 根据向量生成矩阵
-* @param {Vector} v2 2d向量
-* @return {Matrix_2} 返回一个矩阵
----
-
-### static create_ByM2(m2,v)   使用原2d矩阵创建3d矩阵
-* @param {Matrix_2}  m2    原矩阵(2d)
-* @param {Vector}    v     映射的法向
+### static create_Rotate__v(_v)   创建旋转矩阵, 使用旋转向量
+* @param {Vec} _v  3d向量
 * @return {Matrix_3} 返回一个矩阵
 ---
