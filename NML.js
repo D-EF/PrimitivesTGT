@@ -2,7 +2,7 @@
  * @Author: Darth_Eternalfaith darth_ef@hotmail.com
  * @Date: 2022-08-26 01:29:45
  * @LastEditors: Darth_Eternalfaith darth_ef@hotmail.com
- * @LastEditTime: 2022-09-13 23:19:41
+ * @LastEditTime: 2022-09-14 23:56:51
  * @FilePath: \PrimitivesTGT-2D_Editor\js\import\PrimitivesTGT\NML.js
  * @Description: Nittle Math Library
  * 
@@ -279,38 +279,97 @@ class Matrix extends CONGFIG.VALUE_TYPE{
      * @param {int} new_w           新矩阵宽度
      * @param {int} [_low_h]        原矩阵高度 无输入时将使用 low_w
      * @param {int} [_new_h]        新矩阵高度 无输入时将使用 new_w
+     * @param {int} [_shift_top]    旧矩阵拷贝到新矩阵时的上方偏移 默认为
+     * @param {int} [_shift_left]   旧矩阵拷贝到新矩阵时的左侧偏移 默认使用 _shift_top
      * @return {Matrix} 返回一个新矩阵
      */
-     static create_NewSize(m,low_w,new_w,_low_h,_new_h){
-        var low_h=_low_h||low_w,new_h=_new_h||new_w
-        var i,j,u,v,
-            l=new_w*new_h;
-        
+     static create_NewSize(m,low_w,new_w,_low_h,_new_h,_shift_top,_shift_left){
+        var low_h=_low_h||low_w,new_h=_new_h||new_w,
+            shift_top  = (_shift_top&&((new_w+_shift_top)%new_w))||0,
+            shift_left = _shift_left===undefined?shift_top:((new_h+_shift_left)%new_h),
+            l=new_w*new_h,
+            temp_u,temp_v,
+            i,u,v;
         var rtn=new Matrix(l);
-        for(v=new_h-1,i=l-1;v>=0;--v){
-            u=new_w-1;
-            if(v<low_h){
-                while(u>=low_w){
-                    rtn[i]=(u===v)?1:0;
-                    --u;
-                    --i;
-                }
-                j=v*low_w+u;
-                while(u>=0){
-                    rtn[i]=m[j];
-                    --u;
-                    --i;
-                    --j;
-                }
+        u=new_w-1;
+        v=new_h-1;
+        temp_u=u-shift_left;
+        temp_v=v-shift_top;
+        for(i=l-1;i>=0;--i){
+            if(temp_u>=low_w||temp_v>=low_h){
+                rtn[i]=(u===v)?1:0;
             }else{
-                while(u>=0){
-                    rtn[i]=(u===v)?1:0;
-                    --i;
-                    --u;
-                }
+                rtn[i]=m[temp_v*low_w+temp_u];
+            }
+            --u;
+            --temp_u;
+            if(temp_u<0)temp_u=new_w-1;
+            if(u<0){
+                u=new_w-1;
+                --v;
+                --temp_v;
+                if(temp_v<0)temp_v=new_h-1;
             }
         }
         return rtn;
+    }
+
+    /** 计算张量积
+     * @param {Mat} m1 矩阵1
+     * @param {Mat} m2 矩阵2
+     * @param {int} [_w1] 矩阵1的宽度 默认认为 m1 是列向量(w1=0)
+     * @param {int} [_h1] 矩阵1的高度 默认认为 m1 是列向量(h1=m1.length)
+     * @param {int} [_w2] 矩阵2的宽度 默认认为 m2 是行向量(w2=m2.length)
+     * @param {int} [_h2] 矩阵2的高度 默认认为 m2 是行向量(h2=0)
+     * @return {Matrix} 返回一个新的矩阵
+     */
+    static create_TensorProduct(m1,m2,_w1,_h1,_w2,_h2){
+        var rtn=new Matrix(m1.length*m2.length);
+        // todo
+        
+    }
+
+    /** 合并矩阵
+     * @param  {Mat[]} m_list 传入多个矩阵,矩阵应该拥有相同大小
+     * @param  {int} w_l      m_list中一行放几个矩阵
+     * @param  {int} w_m      m_list[i]的宽度
+     * @param  {int} [_h_l]   m_list中一列放几个矩阵
+     * @param  {int} [_h_m]   m_list[i]的高度
+     * @return {Matrix} 返回一个新的矩阵
+     ```javascript
+        Matrix.create_Concat([[1,2,3,4], [5,6,7,8]], 2, 2);
+        // [1,2]   [5,6] >> [1,2,5,6] >> [1,2,5,6,3,4,7,8]
+        // [3,4] , [7,8]    [3,4,7,8]
+     ```
+     */
+    static create_Concat(m_list,w_l,w_m,_h_l,_h_m){
+        var h_l=_h_l||Math.ceil(m_list.length/w_l),
+            h_m=_h_m||Math.ceil(m_list[0].length/w_m),
+            l=w_l*h_l*w_m*h_m;
+        var rtn=new Matrix(l);
+        // todo
+    }
+
+    /** 矩阵乘标量
+     * @param {Mat}     m   矩阵
+     * @param {Number}  k   标量
+     * @return {Matrix} 返回一个新的矩阵
+     */
+    static create_NP(m,k){
+        return Matrix(new Matrix(m),k);
+    }
+
+    /** 矩阵乘标量
+     * @param {Mat}     m   矩阵
+     * @param {Number}  k   标量
+     * @return {Mat} 修改m并返回
+     */
+    static np(m,k){
+        var i;
+        for(i=m.length-1;i>=0;--i){
+            m[i]*=k;
+        }
+        return m;
     }
 
     /** 使用 uv 获取 index 
@@ -747,7 +806,8 @@ class Matrix_3 extends Matrix{
      */
     static create_Rotate__v(_v){
         var v=Vector.create_Normalization(_v);
-        return new Matrix_3([
+        // todo
+        new Matrix_3([
             0   ,   -v.z,   +v.y,
             +v.z,   0   ,   -v.x,
             -v.y,   +v.x,   0 
