@@ -2,7 +2,7 @@
  * @Author: Darth_Eternalfaith darth_ef@hotmail.com
  * @Date: 2022-08-26 01:29:45
  * @LastEditors: Darth_Eternalfaith darth_ef@hotmail.com
- * @LastEditTime: 2022-09-14 23:56:51
+ * @LastEditTime: 2022-09-16 22:06:55
  * @FilePath: \PrimitivesTGT-2D_Editor\js\import\PrimitivesTGT\NML.js
  * @Description: Nittle Math Library
  * 
@@ -11,16 +11,18 @@
 
 import { approximately, deg } from "../basics/math_ex.js";
 
+/** @typedef {Float32Array} globalThis.NML_VALUE_TYPE */
+globalThis.NML_VALUE_TYPE=globalThis.NML_VALUE_TYPE||Float32Array;
 
 /** 配置  */
 const CONGFIG={
     /** 向量使用的数据类型; 可选值为 Float32Array, Float64Array */
-    VALUE_TYPE:Float32Array,
+    VALUE_TYPE:globalThis.NML_VALUE_TYPE,
     /** @type {float} 计算容差 */
     APPROXIMATELY_TOLERANCE:1e-6
 };
 
-const {sin,cos,asin,acos}=Math;
+const {sin,cos,asin,acos,abs,sqrt}=Math;
 
 // 类型注释 open
     /** @typedef {Float32Array} CONGFIG.VALUE_TYPE 矩阵计算时缓存下标的类型; 决定了计算时矩阵的n的大小 可选值为 Uint_N_Array, Int_N_Array */
@@ -60,7 +62,15 @@ class Vector extends CONGFIG.VALUE_TYPE{
         for(var i =v.length-1;i>=0;--i){
             temp+=v[i]*v[i];
         }
-		return Math.sqrt(temp);
+		return sqrt(temp);
+    }
+
+    /** 判断某个向量是否为单位向量
+     * @param {Vec} v 向量
+     * @param {boolean} 返回是否为单位向量
+     */
+    is_Unit(){
+        return abs(Vector.dot(v,v))<CONGFIG.APPROXIMATELY_TOLERANCE;
     }
 
     /** 创建标准化向量
@@ -252,7 +262,7 @@ class Matrix extends CONGFIG.VALUE_TYPE{
      */
     static create_Print(m,w){
         var l=m.length,i,
-            n=parseInt(w||parseInt(Math.sqrt(l)));
+            n=parseInt(w||parseInt(sqrt(l)));
         var rtn=[];
         i=0;
         do{
@@ -268,7 +278,7 @@ class Matrix extends CONGFIG.VALUE_TYPE{
      * @throws {Error} 当 _n 和 m的长度 无法形成方阵时 将会报错
      */
     static check_Square(m,_n){
-        var n=parseInt(_n||Math.sqrt(m.length));
+        var n=parseInt(_n||sqrt(m.length));
         if(n*n!==m.length) throw new Error("This is not a square matrix! It should be a (n*n)!");
         return n;
     }
@@ -317,16 +327,23 @@ class Matrix extends CONGFIG.VALUE_TYPE{
     /** 计算张量积
      * @param {Mat} m1 矩阵1
      * @param {Mat} m2 矩阵2
-     * @param {int} [_w1] 矩阵1的宽度 默认认为 m1 是列向量(w1=0)
+     * @param {int} [_w1] 矩阵1的宽度 默认认为 m1 是列向量(w1=1)
      * @param {int} [_h1] 矩阵1的高度 默认认为 m1 是列向量(h1=m1.length)
      * @param {int} [_w2] 矩阵2的宽度 默认认为 m2 是行向量(w2=m2.length)
-     * @param {int} [_h2] 矩阵2的高度 默认认为 m2 是行向量(h2=0)
+     * @param {int} [_h2] 矩阵2的高度 默认认为 m2 是行向量(h2=1)
      * @return {Matrix} 返回一个新的矩阵
      */
     static create_TensorProduct(m1,m2,_w1,_h1,_w2,_h2){
-        var rtn=new Matrix(m1.length*m2.length);
-        // todo
-        
+        var w1=_w1||1,
+            h1=_h1||m1.length,
+            w2=_w2||m2.length,
+            h2=_h2||1,
+            i=w1*h1;
+        var rtn=new Array(i);
+        for(--i;i>=0;--i){
+            rtn[i]=Matrix.np(m2,m1[i]||0);
+        }
+        return Matrix.concat(rtn,w1,w2,h1,h2);
     }
 
     /** 合并矩阵
@@ -342,12 +359,32 @@ class Matrix extends CONGFIG.VALUE_TYPE{
         // [3,4] , [7,8]    [3,4,7,8]
      ```
      */
-    static create_Concat(m_list,w_l,w_m,_h_l,_h_m){
+    static concat(m_list,w_l,w_m,_h_l,_h_m){
         var h_l=_h_l||Math.ceil(m_list.length/w_l),
             h_m=_h_m||Math.ceil(m_list[0].length/w_m),
-            l=w_l*h_l*w_m*h_m;
+            l_l=w_l*h_l,
+            l_m=w_m*h_m,
+            l=l_l*l_m,
+            w=w_l*w_m,
+            u_l,v_l,u,v,i,j,k;
         var rtn=new Matrix(l);
-        // todo
+        k=l_l;
+        for(v_l=h_l-1;v_l>=0;--v_l){
+            for(u_l=w_l-1;u_l>=0;--u_l){
+                --k;
+                j=l_m;
+                for(v=h_m-1;v>=0;--v){
+                    i=(v_l*h_m+v)*w+w_m*(u_l+1);
+                    if(m_list[k])
+                    for(u=w_m-1;u>=0;--u){
+                        --i;
+                        --j;
+                        rtn[i]=m_list[k][j];
+                    }
+                }        
+            }
+        }
+        return rtn;
     }
 
     /** 矩阵乘标量
@@ -355,8 +392,8 @@ class Matrix extends CONGFIG.VALUE_TYPE{
      * @param {Number}  k   标量
      * @return {Matrix} 返回一个新的矩阵
      */
-    static create_NP(m,k){
-        return Matrix(new Matrix(m),k);
+    static np(m,k){
+        return Matrix.np_b(new Matrix(m),k);
     }
 
     /** 矩阵乘标量
@@ -364,7 +401,7 @@ class Matrix extends CONGFIG.VALUE_TYPE{
      * @param {Number}  k   标量
      * @return {Mat} 修改m并返回
      */
-    static np(m,k){
+    static np_b(m,k){
         var i;
         for(i=m.length-1;i>=0;--i){
             m[i]*=k;
@@ -680,7 +717,7 @@ class Matrix_2 extends Matrix{
      * @return {Matrix_2}
      */
     static create_Rotate__v(_v){
-        var v=Vector.create_Normalization(_v);
+        var v=Vector.is_Unit(_v)?_v:Vector.create_Normalization(_v);
         return new Matrix_2([v[0],v[1],-v[1],v[0]]);
     }
 
@@ -774,30 +811,16 @@ class Matrix_3 extends Matrix{
     static create_Rotate(theta,axis){
         var s=sin(theta),
             c=cos(theta);
-        switch(axis){
-            case 2:
-                // 绕x轴旋转
-                return new Matrix_3(
-                    [1, 0, 0,
-                     0, c, s,
-                     0,-s, c]);
-            break;
-            case 1:
-                // 绕y轴旋转
-                return new Matrix_3(
-                    [c, 0,-s,
-                     0, 1, 0,
-                     s, 0, c]);
-            break;
-            case 0:
-            default:
-                // 绕z轴旋转
-                return new Matrix_3(
-                    [ c, s, 0,
-                     -s, c, 0,
-                      0, 0, 1]);
-            break;
-        }
+        Matrix.create_NewSize([ c, s,-s, c,],2,2,2,2,axis,axis);
+    }
+
+    /** 创建正交投影矩阵
+     * @param {Vec} v 投影面的法线
+     * @return {Matrix_3} 返回一个矩阵
+     */
+    static create_Projection__Orthographic(v){
+        var v=Vector.is_Unit(_v)?_v:Vector.create_Normalization(_v);
+        // todo
     }
 
     /** 创建旋转矩阵, 使用旋转向量
@@ -805,13 +828,16 @@ class Matrix_3 extends Matrix{
      * @return {Matrix_3} 返回一个矩阵
      */
     static create_Rotate__v(_v){
-        var v=Vector.create_Normalization(_v);
+        var v=Vector.is_Unit(_v)?_v:Vector.create_Normalization(_v);
         // todo
-        new Matrix_3([
-            0   ,   -v.z,   +v.y,
-            +v.z,   0   ,   -v.x,
-            -v.y,   +v.x,   0 
-        ]);
+    }
+
+    /** 创建旋转矩阵, 使用欧拉角
+     * @param {Vec} value 欧拉角参数
+     * @param {Vec} axis 欧拉角的轴向顺序 [x,y,z]
+     */
+    static create_Rotate__EulerAngles(value,axis){
+        // todo
     }
 }
 
@@ -824,6 +850,7 @@ Matrix_3.ROTATE_Y_180DEG    = new Matrix_3([-1, 0, -0, 0, 1, 0, 0, 0, -1 ]);
 Matrix_3.ROTATE_Z_CCW_90DEG = new Matrix_3([0, 1, 0, -1, 0, 0, 0, 0, 1 ]);
 Matrix_3.ROTATE_Z_CW_90DEG  = new Matrix_3([0, 1, 0, -1, 0, 0, 0, 0, 1 ]);
 Matrix_3.ROTATE_Z_180DEG    = new Matrix_3([-1, 0, 0, -0, -1, 0, 0, 0, 1 ]);
+
 
 export{
     Vector,
