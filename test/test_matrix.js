@@ -2,8 +2,8 @@
  * @Author: Darth_Eternalfaith darth_ef@hotmail.com
  * @Date: 2022-09-10 19:51:58
  * @LastEditors: Darth_Eternalfaith darth_ef@hotmail.com
- * @LastEditTime: 2022-09-10 19:54:28
- * @FilePath: \PrimitivesTGT-2D_Editor\js\import\PrimitivesTGT\test\test_matrix.js
+ * @LastEditTime: 2022-09-16 22:32:47
+ * @FilePath: \site\js\import\PrimitivesTGT\test\test_matrix.js
  * @Description: test Matrix
  * 
  * Copyright (c) 2022 by Darth_Eternalfaith darth_ef@hotmail.com, All Rights Reserved. 
@@ -105,7 +105,7 @@ function test_(){
     return test_matrix;
 }
 
-test_();
+// test_();
 
 Object.assign(window,{
     Vector,
@@ -113,3 +113,7 @@ Object.assign(window,{
     Matrix_2,
     Matrix_3,
 });
+
+export {
+    test_ as test__matrix
+}
