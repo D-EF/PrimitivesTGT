@@ -2,8 +2,8 @@
  * @Author: Darth_Eternalfaith darth_ef@hotmail.com
  * @Date: 2022-08-26 01:29:45
  * @LastEditors: Darth_Eternalfaith darth_ef@hotmail.com
- * @LastEditTime: 2022-09-16 22:06:55
- * @FilePath: \PrimitivesTGT-2D_Editor\js\import\PrimitivesTGT\NML.js
+ * @LastEditTime: 2022-09-18 20:47:53
+ * @FilePath: \site\js\import\PrimitivesTGT\NML.js
  * @Description: Nittle Math Library
  * 
  * Copyright (c) 2022 by Darth_Eternalfaith darth_ef@hotmail.com, All Rights Reserved. 
@@ -293,7 +293,7 @@ class Matrix extends CONGFIG.VALUE_TYPE{
      * @param {int} [_shift_left]   旧矩阵拷贝到新矩阵时的左侧偏移 默认使用 _shift_top
      * @return {Matrix} 返回一个新矩阵
      */
-     static create_NewSize(m,low_w,new_w,_low_h,_new_h,_shift_top,_shift_left){
+    static create_NewSize(m,low_w,new_w,_low_h,_new_h,_shift_top,_shift_left){
         var low_h=_low_h||low_w,new_h=_new_h||new_w,
             shift_top  = (_shift_top&&((new_w+_shift_top)%new_w))||0,
             shift_left = _shift_left===undefined?shift_top:((new_h+_shift_left)%new_h),
