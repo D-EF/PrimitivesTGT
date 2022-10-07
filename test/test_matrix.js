@@ -2,13 +2,13 @@
  * @Author: Darth_Eternalfaith darth_ef@hotmail.com
  * @Date: 2022-09-10 19:51:58
  * @LastEditors: Darth_Eternalfaith darth_ef@hotmail.com
- * @LastEditTime: 2022-09-16 22:32:47
+ * @LastEditTime: 2022-10-07 02:55:31
  * @FilePath: \site\js\import\PrimitivesTGT\test\test_matrix.js
  * @Description: test Matrix
  * 
  * Copyright (c) 2022 by Darth_Eternalfaith darth_ef@hotmail.com, All Rights Reserved. 
  */
-import { Matrix, Matrix_2, Matrix_3, Vector } from "../NML";
+import { Matrix, Matrix_2, Matrix_3, Vector } from "../../NML/NML.js";
 
 // console.log("create_Print [1,2,3,4,5,6,7,8,9] ",Matrix.create_Print([1,2,3,4,5,6,7,8,9]));
 // console.log("create_Identity",Matrix.create_Print(Matrix.create_Identity(3)));
@@ -35,7 +35,7 @@ function test_(){
         n;
     var i,j;
     console.log("创建测试矩阵数据 open");
-    console.time();
+    console.time("创建测试矩阵数据");
     for(i=100;i>0;--i){
         // n=parseInt(Math.random()*5+3);
         n=3
@@ -53,29 +53,29 @@ function test_(){
     //     data:[4,1,1,1,0,4,1,1,1,1,0,1,1,1,1,0],
     //     n:4
     // }]
-    console.timeEnd();
+    console.timeEnd("创建测试矩阵数据");
     console.log("创建测试矩阵数据 End",test_matrix);
     
     console.log("计算行列式 open");
-    console.time();
+    console.time("计算行列式");
         for(i=test_matrix.length-1;i>=0;--i){
             // console.log("det_c>"
             // +test_matrix[i].data.join(','),
             Matrix.calc_Det(test_matrix[i].data)
             // );
         }
-    console.timeEnd();
+    console.timeEnd("计算行列式");
     console.log("计算行列式 end");
     
     console.log("计算逆矩阵 open");
-    console.time();
+    console.time("计算逆矩阵");
         for(i=test_matrix.length-1;i>=0;--i){
             // console.log("Inverse>"
             // +test_matrix[i].data.join(','),
             Matrix.create_Inverse(test_matrix[i].data)
             // );
         }
-    console.timeEnd();
+    console.timeEnd("计算逆矩阵");
     console.log("计算逆矩阵 end");
 
     console.log("抽取样本 open");
@@ -104,6 +104,9 @@ function test_(){
 
     return test_matrix;
 }
+
+globalThis.Vector=Vector;
+globalThis.Matrix=Matrix;
 
 // test_();
 
