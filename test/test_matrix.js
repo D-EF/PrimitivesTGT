@@ -26,22 +26,23 @@ import { Matrix, Matrix_2, Matrix_3, Vector } from "../../NML/NML.js";
 
 
 // console.log("create_Inverse [0, 7, 2, 2, 9, 9, 9, 8, 1] ",Matrix.create_Print(Matrix.create_Inverse([0, 7, 2, 2, 9, 9, 9, 8, 1])));
-console.log("change size 2x2 Matrix [1,2,3,4] --> 3x3 Matrix ",Matrix.create_Print(Matrix.create_NewSize([1,2,3,4],2,4)));
 
 
-function test_(){
+function test__Det_And_Inverse(){
     var test_matrix=[],
-        temp,
-        n;
+    temp,
+    n;
     var i,j;
     console.log("创建测试矩阵数据 open");
     console.time("创建测试矩阵数据");
     for(i=100;i>0;--i){
         // n=parseInt(Math.random()*5+3);
-        n=3
-        temp=[];
-        for(j=n*n;j>0;--j){
-            temp.push(parseInt(Math.random()*10));
+        n=3;
+        j=n*n;
+        temp=new Matrix(j);
+        for(--j;j>=0;--j){
+            // temp[j]=(Math.random()*10);
+            temp[j]=(parseInt(Math.random()*100));
         }
         test_matrix.push({
             data:temp,
@@ -105,6 +106,17 @@ function test_(){
     return test_matrix;
 }
 
+function test__setup(){
+    // var d = new Matrix([1,2,3,4]);
+    // var r = new Matrix([1,2,3,4,5,6,7,8,9]);
+    // Matrix.setup(d,r,3,2,3,2,1,1);
+    // console.log(Matrix.create_Print(d,2));
+    // console.log("change size 2x2 Matrix [1,2,3,4] --> 4x4 Matrix ",Matrix.create_Print(Matrix.create_NewSize([1,2,3,4],2,4,2,4,2,1)));
+    console.log(Matrix.create_Print(Matrix_3.create_Rotate__Axis(1,[0,0,-1]),3));
+    console.log(Matrix.create_Print(Matrix_3.create_Rotate(1,0),3));
+    console.log(Matrix.create_Print(Matrix_3.create_Rotate__EulerAngles([1,0,0],[0,1,2]),3));
+}
+
 globalThis.Vector=Vector;
 globalThis.Matrix=Matrix;
 
@@ -118,5 +130,5 @@ Object.assign(window,{
 });
 
 export {
-    test_ as test__matrix
+    test__Det_And_Inverse as test__matrix
 }
