@@ -1,7 +1,7 @@
 /*
  * @Author: Darth_Eternalfaith darth_ef@hotmail.com
  * @LastEditors: Darth_Eternalfaith darth_ef@hotmail.com
- * @LastEditTime: 2022-10-07 16:57:52
+ * @LastEditTime: 2022-11-04 21:43:26
  * @FilePath: \site\js\import\PrimitivesTGT\Geometry_2D.js
  * @Description: 2D 几何图形
  * 
@@ -28,10 +28,10 @@ import { NML_CONFIG as CONFIG, Polygon, Vector } from "../NML/NML.js";
         }
 
         /** 使用向量数组创建
-         * @param {List_Value[]} list 
+         * @param {List_Value[]} point_list 
          */
-        static create_ByVectorList(list){
-            var rtn=new Polygon([],list[0].length);
+        static create_ByVectorList(point_list){
+            var rtn=new Polygon([],point_list[0].length);
             
             return rtn;
         }
@@ -61,54 +61,54 @@ import { NML_CONFIG as CONFIG, Polygon, Vector } from "../NML/NML.js";
         }
 
         /** 求最小坐标
-         * @param {Rect}    r 矩阵数据
+         * @param {Rect}    rect 矩阵数据
          * @return {Vector} 返回一个2D向量
          */
-        static get_Min(r){
+        static get_Min(rect){
             return new Vector([
-                r[2]>=0?r[0]:r[0]+r[2],
-                r[3]>=0?r[1]:r[1]+r[3]
+                rect[2]>=0?rect[0]:rect[0]+rect[2],
+                rect[3]>=0?rect[1]:rect[1]+rect[3]
             ]);
         }
 
         /** 求最大坐标
-         * @param {Rect}    r 矩阵数据
+         * @param {Rect}    rect 矩阵数据
          * @return {Vector} 返回一个2D向量
          */
-        static get_Min(r){
+        static get_Min(rect){
             return new Vector([
-                r[2]<=0?r[0]:r[0]+r[2],
-                r[3]<=0?r[1]:r[1]+r[3]
+                rect[2]<=0?rect[0]:rect[0]+rect[2],
+                rect[3]<=0?rect[1]:rect[1]+rect[3]
             ]);
         }
 
         /** 判断点是否在内部
-         * @param {Rect} r 矩阵数据
-         * @param {Vec}  v     点 2D向量
+         * @param {Rect} rect 矩阵数据
+         * @param {Vec}  vec     点 2D向量
          * @returns {Boolean} 返回 v 是否在矩形内部
          */
-        static is_Inside(r,v){
+        static is_Inside(rect,vec){
             var x_min,x_max,y_min,y_max;
-            if(r[2]>=0){
-                x_min = r[0];
-                x_max = r[0]+r[2];
+            if(rect[2]>=0){
+                x_min = rect[0];
+                x_max = rect[0]+rect[2];
             }else{
-                x_max = r[0];
-                x_min = r[0]+r[2];
+                x_max = rect[0];
+                x_min = rect[0]+rect[2];
             }
-            if(r[3]>=0){
-                y_min = r[1];
-                y_max = r[1]+r[3];
+            if(rect[3]>=0){
+                y_min = rect[1];
+                y_max = rect[1]+rect[3];
             }else{
-                y_min = r[1]+r[3];
-                y_max = r[1];
+                y_min = rect[1]+rect[3];
+                y_max = rect[1];
             }
 
             return (
-                v[0]>x_min &&
-                v[0]<x_max &&
-                v[1]<y_max &&
-                v[1]>y_min
+                vec[0]>x_min &&
+                vec[0]<x_max &&
+                vec[1]<y_max &&
+                vec[1]>y_min
             );
         }
 
