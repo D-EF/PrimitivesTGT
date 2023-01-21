@@ -39,7 +39,7 @@ import { NML_CONFIG as CONFIG, Polygon, Vector } from "../NML/NML.js";
         /** 追加一个点
          * @param {List_Value}  p 点的数据
          * @param {Polygon}     p 点的数据
-         * @return {}
+         * @returns {}
          */
         static addPrint
     }
@@ -62,7 +62,7 @@ import { NML_CONFIG as CONFIG, Polygon, Vector } from "../NML/NML.js";
 
         /** 求最小坐标
          * @param {Rect}    rect 矩阵数据
-         * @return {Vector} 返回一个2D向量
+         * @returns {Vector} 返回一个2D向量
          */
         static get_Min(rect){
             return new Vector([
@@ -73,7 +73,7 @@ import { NML_CONFIG as CONFIG, Polygon, Vector } from "../NML/NML.js";
 
         /** 求最大坐标
          * @param {Rect}    rect 矩阵数据
-         * @return {Vector} 返回一个2D向量
+         * @returns {Vector} 返回一个2D向量
          */
         static get_Min(rect){
             return new Vector([
@@ -113,7 +113,7 @@ import { NML_CONFIG as CONFIG, Polygon, Vector } from "../NML/NML.js";
         }
 
         /**
-         * @return {Polygon}
+         * @returns {Polygon}
          */
         static create_Polygon(){
             // todo
