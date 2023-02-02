@@ -39,7 +39,7 @@ import { NML_CONFIG as CONFIG, Polygon, Vector } from "../NML/NML.js";
         /** 追加一个点
          * @param {List_Value}  p 点的数据
          * @param {Polygon}     p 点的数据
-         * @returns {}
+         * @return {}
          */
         static addPrint
     }
@@ -62,7 +62,7 @@ import { NML_CONFIG as CONFIG, Polygon, Vector } from "../NML/NML.js";
 
         /** 求最小坐标
          * @param {Rect}    rect 矩阵数据
-         * @returns {Vector} 返回一个2D向量
+         * @return {Vector} 返回一个2D向量
          */
         static get_Min(rect){
             return new Vector([
@@ -73,7 +73,7 @@ import { NML_CONFIG as CONFIG, Polygon, Vector } from "../NML/NML.js";
 
         /** 求最大坐标
          * @param {Rect}    rect 矩阵数据
-         * @returns {Vector} 返回一个2D向量
+         * @return {Vector} 返回一个2D向量
          */
         static get_Min(rect){
             return new Vector([
@@ -85,7 +85,7 @@ import { NML_CONFIG as CONFIG, Polygon, Vector } from "../NML/NML.js";
         /** 判断点是否在内部
          * @param {Rect} rect 矩阵数据
          * @param {Vec}  vec     点 2D向量
-         * @returns {Boolean} 返回 v 是否在矩形内部
+         * @return {Boolean} 返回 v 是否在矩形内部
          */
         static is_Inside(rect,vec){
             var x_min,x_max,y_min,y_max;
@@ -113,7 +113,7 @@ import { NML_CONFIG as CONFIG, Polygon, Vector } from "../NML/NML.js";
         }
 
         /**
-         * @returns {Polygon}
+         * @return {Polygon}
          */
         static create_Polygon(){
             // todo
