@@ -49,7 +49,7 @@ import { NML_CONFIG as CONFIG, Polygon, Vector } from "../NML/NML.js";
     /** 矩形 */
     class Rect extends CONFIG.VALUE_TYPE{
         /** 构造函数
-         * @param {[x:Number,y:Number,width:Number,height:Number]} data 
+         * @param {[x:number,y:number,width:number,height:number]} data 
          */
         constructor(data){
             super([
