@@ -85,7 +85,7 @@ import { NML_CONFIG as CONFIG, Polygon, Vector } from "../NML/NML.js";
         /** 判断点是否在内部
          * @param {Rect} rect 矩阵数据
          * @param {Vec}  vec     点 2D向量
-         * @return {Boolean} 返回 v 是否在矩形内部
+         * @return {boolean} 返回 v 是否在矩形内部
          */
         static is_Inside(rect,vec){
             var x_min,x_max,y_min,y_max;
