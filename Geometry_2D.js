@@ -8,7 +8,7 @@
  * Copyright (c) 2022 by Darth_Eternalfaith darth_ef@hotmail.com, All Rights Reserved. 
  */
 
-import { NML_CONFIG as CONFIG, Polygon, Vector } from "../NML/NML.js";
+import { CONFIG__NML as CONFIG, Polygon, Vector } from "../NML/NML.js";
 
 /** @typedef {import("../NML/NML").List_Value} Vec */
 
